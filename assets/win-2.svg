@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 236" width="400" height="236" role="img" aria-label="NaSCon &#x27;26 APP DEV: TIED 1ST OF 12 TEAMS, nascon26-appdev">
+<style>
+  .mono { font-family: 'JetBrains Mono', 'Cascadia Code', ui-monospace, SFMono-Regular, Consolas, monospace; }
+  .sans { font-family: 'Segoe UI', Inter, -apple-system, Helvetica, Arial, sans-serif; }
+  .drift { animation: drift 6s linear infinite; }
+  .scan { animation: scan 7s linear infinite; }
+  .blink { animation: blink 1.1s steps(1) infinite; }
+  .pulse { animation: pulse 2.4s ease-in-out infinite; }
+  @keyframes drift { to { transform: translate(-32px, -32px); } }
+  @keyframes scan { from { transform: translateY(-120px); } to { transform: translateY(276px); } }
+  @keyframes blink { 50% { opacity: 0; } }
+  @keyframes pulse { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+  
+  .shimmer { animation: shimmer 5s ease-in-out infinite 0.9s; }
+  @keyframes shimmer { 0% { transform: translateX(-260px) skewX(-20deg); } 45%, 100% { transform: translateX(520px) skewX(-20deg); } }
+  .twinkle { animation: twinkle 2.8s ease-in-out infinite; }
+  @keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(.4); } 50% { opacity: 1; transform: scale(1); } }
+  .twinkle { transform-box: fill-box; transform-origin: center; }
+
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+</style>
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#05070d"/><stop offset="1" stop-color="#0a1222"/></linearGradient>
+  <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#16243d" stroke-width="1"/></pattern>
+  <linearGradient id="scanline" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#22d3ee" stop-opacity="0"/><stop offset=".85" stop-color="#22d3ee" stop-opacity=".07"/>
+    <stop offset="1" stop-color="#22d3ee" stop-opacity=".25"/></linearGradient>
+  <radialGradient id="vignette" cx=".5" cy=".5" r=".75"><stop offset=".55" stop-color="#05070d" stop-opacity="0"/><stop offset="1" stop-color="#05070d" stop-opacity=".85"/></radialGradient>
+  <filter id="glow" x="-20%" y="-40%" width="140%" height="180%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <filter id="softglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <clipPath id="frame"><rect width="400" height="236" rx="18"/></clipPath>
+</defs>
+<g clip-path="url(#frame)">
+  <rect width="400" height="236" fill="url(#bg)"/>
+  <g class="drift"><rect width="464" height="300" fill="url(#grid)"/></g>
+  <rect width="400" height="236" fill="url(#vignette)"/>
+  
+  <defs>
+    <linearGradient id="border" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="400" y2="236">
+      <stop offset="0" stop-color="#fcd34d"/><stop offset=".4" stop-color="#22d3ee" stop-opacity=".2"/><stop offset=".7" stop-color="#a78bfa"/><stop offset="1" stop-color="#fcd34d"/>
+      <animateTransform attributeName="gradientTransform" type="rotate" values="0 200.0 118.0;360 200.0 118.0" dur="6s" repeatCount="indefinite"/>
+    </linearGradient>
+    <linearGradient id="sh" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".09"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <linearGradient id="numgrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fcd34d"/><stop offset="1" stop-color="#fcd34d" stop-opacity=".25"/></linearGradient>
+  </defs>
+  <rect x="3" y="3" width="394" height="230" rx="15" fill="none" stroke="url(#border)" stroke-width="2.5"/>
+  <text x="24" y="70" class="mono" font-size="56" font-weight="700" fill="url(#numgrad)">02</text>
+  <polygon points="359.4,79.0 330.0,96.0 300.6,79.0 300.6,45.0 330.0,28.0 359.4,45.0" fill="#fcd34d" fill-opacity=".1" stroke="#fcd34d" stroke-width="2" filter="url(#softglow)"/>
+  <text x="330" y="70" text-anchor="middle" class="mono" font-size="20" font-weight="700" fill="#fcd34d">1ST</text>
+  <path class="twinkle" style="animation-delay:0.3s" d="M282 24L283.5 28.5L288 30L283.5 31.5L282 36L280.5 31.5L276 30L280.5 28.5Z" fill="#fcd34d"/><path class="twinkle" style="animation-delay:1.0s" d="M372 94L373.5 98.5L378 100L373.5 101.5L372 106L370.5 101.5L366 100L370.5 98.5Z" fill="#fcd34d"/><path class="twinkle" style="animation-delay:1.7s" d="M296 98L297.5 102.5L302 104L297.5 105.5L296 110L294.5 105.5L290 104L294.5 102.5Z" fill="#fcd34d"/>
+  <text x="24" y="118" class="sans" font-size="21" font-weight="700" fill="#e6f1ff" letter-spacing="1">NaSCon &#x27;26 APP DEV</text>
+  <text x="24" y="142" class="mono" font-size="13" fill="#fcd34d" letter-spacing="1.5">TIED 1ST OF 12 TEAMS</text>
+  <text x="24" y="164" class="mono" font-size="13" fill="#22d3ee">&gt; nascon26-appdev</text>
+  <text x="24" y="186" class="sans" font-size="14" fill="#7f8ea8">League platform plus offline-first Flutter</text><text x="24" y="206" class="sans" font-size="14" fill="#7f8ea8">app in two days. 1,246 tests.</text>
+  <rect class="shimmer" x="0" y="0" width="120" height="236" fill="url(#sh)"/>
+
+  <rect class="scan" width="400" height="120" fill="url(#scanline)"/>
+</g>
+<rect x=".5" y=".5" width="399" height="235" rx="18" fill="none" stroke="#16243d"/>
+<path d="M10 32V10H32" fill="none" stroke="#22d3ee" stroke-width="2.5" opacity=".9"/><path d="M368 10H390V32" fill="none" stroke="#22d3ee" stroke-width="2.5" opacity=".9"/><path d="M10 204V226H32" fill="none" stroke="#22d3ee" stroke-width="2.5" opacity=".9"/><path d="M368 226H390V204" fill="none" stroke="#22d3ee" stroke-width="2.5" opacity=".9"/>
+</svg>
