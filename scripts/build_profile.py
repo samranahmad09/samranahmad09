@@ -29,6 +29,19 @@ SANS = "'Segoe UI', Inter, -apple-system, Helvetica, Arial, sans-serif"
 MONO = "'JetBrains Mono', 'Cascadia Code', ui-monospace, SFMono-Regular, Consolas, monospace"
 LANG_COLORS = [CYAN, VIOLET, MAGENTA, GREEN, AMBER]
 
+# bundled third-party files that GitHub counts as the repo's own code
+VENDORED = {"word-shooter-game": {"CImg.h": "C++"}}
+# forks count only what they add over upstream: fork -> (upstream, upstream branch, fork branch)
+FORKS = {
+    "WhateverXe-RaptorLakeP": ("b00t0x/WhateverXe", "main", "main"),
+    "OpenCore-Legacy-Patcher-RaptorLakeP": ("b00t0x/OpenCore-Legacy-Patcher", "mod", "rplp-a7a8"),
+    "hackathon-fortyguard": ("FortyGuard-Tech/temperature-api-quickstart", "main", "main"),
+}
+EXT_LANG = {"cpp": "C++", "hpp": "C++", "cc": "C++", "h": "C++", "py": "Python", "sh": "Shell", "ps1": "PowerShell",
+            "dsl": "ASL", "asl": "ASL", "ts": "TypeScript", "tsx": "TypeScript", "js": "JavaScript",
+            "dart": "Dart", "kt": "Kotlin", "html": "HTML", "css": "CSS", "asm": "Assembly"}
+BYTES_PER_LINE = 38  # fallback when GitHub omits a file's patch because it is too large
+
 
 # ---------------------------------------------------------------- data
 
@@ -72,6 +85,11 @@ def collect():
     for r in repos:
         if not r["fork"]:
             langs.update(rest(f"repos/{USER}/{r['name']}/languages"))
+    for repo, files in VENDORED.items():
+        for path, lang in files.items():
+            langs[lang] -= rest(f"repos/{USER}/{repo}/contents/{path}")["size"]
+    for fork, spec in FORKS.items():
+        langs.update(fork_additions(fork, *spec))
     # private repos need LANG_TOKEN: a fine-grained token with read-only Metadata on just those repos
     private = [n for n in os.environ.get("PRIVATE_LANG_REPOS", "").split(",") if n]
     lang_token = os.environ.get("LANG_TOKEN")
@@ -106,6 +124,21 @@ def collect():
         "gpu_latest": commits[0]["commit"]["message"].split("\n")[0] if commits else "",
         "synced": datetime.now(PKT).strftime("%Y-%m-%d %H:%M PKT"),
     }
+
+
+def fork_additions(fork, upstream, base, head):
+    """Bytes per language on the lines a fork adds over its merge base with upstream."""
+    diff = rest(f"repos/{upstream}/compare/{base}...{USER}:{fork}:{head}")
+    out = Counter()
+    for f in diff["files"]:
+        lang = EXT_LANG.get(f["filename"].rsplit(".", 1)[-1].lower())
+        if not lang:
+            continue
+        if "patch" in f:
+            out[lang] += sum(len(l) - 1 for l in f["patch"].split("\n") if l.startswith("+"))
+        else:
+            out[lang] += f["additions"] * BYTES_PER_LINE
+    return out
 
 
 def _chunks(xs, n):
@@ -490,7 +523,7 @@ def telemetry(d):
   <path class="draw" d="{line}" fill="none" stroke="url(#linegrad)" stroke-width="2.5" stroke-linejoin="round" filter="url(#softglow)"/>
   <circle class="ping" cx="{lx:.1f}" cy="{ly:.1f}" r="5" fill="none" stroke="{MAGENTA}" stroke-width="2"/>
   <circle cx="{lx:.1f}" cy="{ly:.1f}" r="4.5" fill="{MAGENTA}"/>
-  <text x="{cx}" y="278" class="mono" font-size="12" fill="{MUTED}" letter-spacing="1">LANGUAGES // {'OWN REPOS, INCL. PRIVATE GPU KIT' if d['langs_private'] else 'OWN PUBLIC REPOS'}</text>
+  <text x="{cx}" y="278" class="mono" font-size="12" fill="{MUTED}" letter-spacing="1">LANGUAGES // MY CODE, FORK DIFFS{' + PRIVATE' if d['langs_private'] else ''} INCL.</text>
   {''.join(lang_svg)}
 """
     return svg(1200, 350, body, css, f"{d['total']} contributions in the last year, {d['streak']}-day streak")
