@@ -32,11 +32,11 @@ LANG_COLORS = [CYAN, VIOLET, MAGENTA, GREEN, AMBER]
 
 # ---------------------------------------------------------------- data
 
-def rest(path, **params):
+def rest(path, token=TOKEN, **params):
     url = f"https://api.github.com/{path}"
     if params:
         url += "?" + urllib.parse.urlencode(params)
-    req = urllib.request.Request(url, headers={"Authorization": f"Bearer {TOKEN}", "Accept": "application/vnd.github+json"})
+    req = urllib.request.Request(url, headers={"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json"})
     with urllib.request.urlopen(req, timeout=30) as r:
         return json.load(r)
 
@@ -72,6 +72,13 @@ def collect():
     for r in repos:
         if not r["fork"]:
             langs.update(rest(f"repos/{USER}/{r['name']}/languages"))
+    # private repos need LANG_TOKEN: a fine-grained token with read-only Metadata on just those repos
+    private = [n for n in os.environ.get("PRIVATE_LANG_REPOS", "").split(",") if n]
+    lang_token = os.environ.get("LANG_TOKEN")
+    for name in private if lang_token else []:
+        langs.update(rest(f"repos/{USER}/{name}/languages", token=lang_token))
+    if private and not lang_token:
+        print(f"LANG_TOKEN not set, languages skip {', '.join(private)}")
 
     gpu = rest(f"repos/{USER}/{GPU_REPO}")
     commits = []
@@ -91,6 +98,7 @@ def collect():
         "weeks": [sum(w) for w in _chunks([n for _, n in days][-364:], 7)],
         "repos": len(repos),
         "langs": langs.most_common(5),
+        "langs_private": bool(private and lang_token),
         "gpu_commits": len(commits),
         "gpu_weekly": weekly,
         "gpu_stars": gpu["stargazers_count"],
@@ -482,7 +490,7 @@ def telemetry(d):
   <path class="draw" d="{line}" fill="none" stroke="url(#linegrad)" stroke-width="2.5" stroke-linejoin="round" filter="url(#softglow)"/>
   <circle class="ping" cx="{lx:.1f}" cy="{ly:.1f}" r="5" fill="none" stroke="{MAGENTA}" stroke-width="2"/>
   <circle cx="{lx:.1f}" cy="{ly:.1f}" r="4.5" fill="{MAGENTA}"/>
-  <text x="{cx}" y="278" class="mono" font-size="12" fill="{MUTED}" letter-spacing="1">LANGUAGES // OWN PUBLIC REPOS</text>
+  <text x="{cx}" y="278" class="mono" font-size="12" fill="{MUTED}" letter-spacing="1">LANGUAGES // {'OWN REPOS, INCL. PRIVATE GPU KIT' if d['langs_private'] else 'OWN PUBLIC REPOS'}</text>
   {''.join(lang_svg)}
 """
     return svg(1200, 350, body, css, f"{d['total']} contributions in the last year, {d['streak']}-day streak")

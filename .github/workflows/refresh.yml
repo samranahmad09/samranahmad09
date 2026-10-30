@@ -30,6 +30,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PROFILE_USER: ${{ github.repository_owner }}
+          PRIVATE_LANG_REPOS: RaptorLakeP-macOS
+          LANG_TOKEN: ${{ secrets.LANG_TOKEN }}
 
       - name: Build contribution snake
         uses: Platane/snk/svg-only@v3
